@@ -1,5 +1,5 @@
 import './App.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Player from './Player/Player'
 
 
@@ -21,6 +21,7 @@ function App() {
   const [current, setCurrent] = useState(0)
   const [diceNumber, setDiceNumber] = useState(0)
   const [winner, setWinner] = useState(false)
+  const inputRef = useRef(null)
 
   const handleHold = () => {
     // para cambiar el score, se debe definir una nueva variable
@@ -35,18 +36,16 @@ function App() {
     newScore[activePlayer - 1] += current
   
     setScore(newScore)
+    setActivePlayer(activePlayer === 1 ? 2 : 1) 
 if(newScore[activePlayer - 1] >= 20){
       setWinner(true)
      
     }
-    setActivePlayer(activePlayer === 1 ? 2 : 1) 
     
-
-    
-
     setCurrent(0)
 
   }
+
   const handleNewGame = () => {
     setActivePlayer(1)
     setScore([0, 0])
@@ -54,24 +53,40 @@ if(newScore[activePlayer - 1] >= 20){
     setDiceNumber(0)
   }
 
+
+const updateDiceNumber = (diceNumber) => {
+  setCurrent((current) => current + diceNumber)
+ }
+
+
   const handleRollDice = () => {
     // const randomNumber = Math.floor(Math.random() * 6) + 1
     // setDiceNumber(randomNumber)
     setDiceNumber(Math.floor(Math.random() * 6) + 1)
-  }
-
-  useEffect(() => {
+    // console.log(randomNumber + " random number")
+    console.log(diceNumber + " dice number")
+    // updateDiceNumber(diceNumber)
     if (diceNumber === 1) {
       setActivePlayer((activePlayer) => (activePlayer === 1 ? 2 : 1))
       setCurrent(0)
     } else {
       // setCurrent (current + diceNumber)
-      setCurrent((current) => current + diceNumber)
+    //  setCurrent((current) => current + diceNumber)
+    updateDiceNumber(diceNumber)
     }
-  }, [diceNumber])
+    
+  }
+ 
+  // useEffect(() => {
+  //   if (diceNumber === 1) {
+  //     setActivePlayer((activePlayer) => (activePlayer === 1 ? 2 : 1))
+  //     setCurrent(0)
+  //   } else {
+  //     // setCurrent (current + diceNumber)
+  //     setCurrent((current) => current + diceNumber)
+  //   }
+  // }, [ diceNumber])
 
-  console.log(winner + "ganador")
-  console.log(score+ "score")
   
   return (
     <main>
@@ -99,7 +114,7 @@ if(newScore[activePlayer - 1] >= 20){
       <button className="btn btn--new" onClick={handleNewGame}>
         🔄 New game
       </button>
-      <button className="btn btn--roll" onClick={handleRollDice}>
+      <button className="btn btn--roll" ref={inputRef} onClick={handleRollDice}>
         🎲 Roll dice
       </button>
       <button className="btn btn--hold" onClick={handleHold}>
