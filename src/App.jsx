@@ -1,5 +1,5 @@
 import './App.css'
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import Player from './Player/Player'
 
 
@@ -20,7 +20,7 @@ function App() {
   const [score, setScore] = useState([0, 0])
   const [current, setCurrent] = useState(0)
   const [diceNumber, setDiceNumber] = useState(0)
-  const [winner, setWinner] = useState(false)
+  const [hiddenButton, setHiddenButton] = useState("")
 
 
   const handleHold = () => {
@@ -37,9 +37,15 @@ function App() {
   
     setScore(newScore)
     
-if(newScore[activePlayer - 1] < 20){
+    //cuando no se haya ganado todavía, mientras el score sea menor a 20, seguirá cambiando de jugador
+    //si se pasa de 20, se oculta el boton de rollDice
+
+    if(newScore[activePlayer - 1] < 20){
      
       setActivePlayer(activePlayer === 1 ? 2 : 1) 
+    }
+    else{
+      setHiddenButton("hidden")
     }
     
     setCurrent(0)
@@ -47,10 +53,13 @@ if(newScore[activePlayer - 1] < 20){
   }
 
   const handleNewGame = () => {
+
+    //establecemos las variables de estado a sus valores iniciales
     setActivePlayer(1)
     setScore([0, 0])
     setCurrent(0)
     setDiceNumber(0)
+    setHiddenButton("")
   }
 
 
@@ -60,6 +69,9 @@ const updateDiceNumber = (diceNumber) => {
 
 
   const handleRollDice = () => {
+    //se genera un numero aleatorio del 1 al  segun los dados, y se lo pasamos a la variable de estado
+    //si es 1, cambia de jugador, de lo contrario, lo irá sumando y se acumulará en el current
+    
     const randomNumber = Math.floor(Math.random() * 6) + 1
     setDiceNumber(randomNumber)
   
@@ -68,8 +80,9 @@ const updateDiceNumber = (diceNumber) => {
       setCurrent(0)
     } else {
 
-      // setCurrent (current + diceNumber)
-    //  setCurrent((current) => current + diceNumber)
+    // setCurrent (current + diceNumber)
+    //  setCurrent((current) => current + diceNumber), para que sume el current 
+    // conforme vayamos tirando el dado
     updateDiceNumber(randomNumber)
     }
     
@@ -78,6 +91,8 @@ const updateDiceNumber = (diceNumber) => {
   
   return (
     <main>
+      {/* Tarjetas Player 1 y Player 2 a las cuales les pasamos loos datos necesarios para que muestren su
+      score y su current, además de si se encuentra el jugador activo o no */}
       <Player
         name="Player 1"
         score={score[0]}
@@ -92,6 +107,8 @@ const updateDiceNumber = (diceNumber) => {
         isActive={activePlayer === 2}
         
       />
+
+        {/*Mientras exista el diceNumber, se muestra la imagen del dado según el numero que sea diceNumber */}
       {diceNumber && (
         <img
           src={`dice-${diceNumber}.png`}
@@ -102,7 +119,7 @@ const updateDiceNumber = (diceNumber) => {
       <button className="btn btn--new" onClick={handleNewGame}>
         🔄 New game
       </button>
-      <button className="btn btn--roll"  onClick={handleRollDice}>
+      <button className={`btn btn--roll ${hiddenButton}`}  onClick={handleRollDice}>
         🎲 Roll dice
       </button>
       <button className="btn btn--hold" onClick={handleHold}>
