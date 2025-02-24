@@ -21,7 +21,7 @@ function App() {
   const [current, setCurrent] = useState(0)
   const [diceNumber, setDiceNumber] = useState(0)
   const [winner, setWinner] = useState(false)
-  const inputRef = useRef(null)
+
 
   const handleHold = () => {
     // para cambiar el score, se debe definir una nueva variable
@@ -36,10 +36,10 @@ function App() {
     newScore[activePlayer - 1] += current
   
     setScore(newScore)
-    setActivePlayer(activePlayer === 1 ? 2 : 1) 
-if(newScore[activePlayer - 1] >= 20){
-      setWinner(true)
+    
+if(newScore[activePlayer - 1] < 20){
      
+      setActivePlayer(activePlayer === 1 ? 2 : 1) 
     }
     
     setCurrent(0)
@@ -60,49 +60,37 @@ const updateDiceNumber = (diceNumber) => {
 
 
   const handleRollDice = () => {
-    // const randomNumber = Math.floor(Math.random() * 6) + 1
-    // setDiceNumber(randomNumber)
-    setDiceNumber(Math.floor(Math.random() * 6) + 1)
-    // console.log(randomNumber + " random number")
-    console.log(diceNumber + " dice number")
-    // updateDiceNumber(diceNumber)
-    if (diceNumber === 1) {
+    const randomNumber = Math.floor(Math.random() * 6) + 1
+    setDiceNumber(randomNumber)
+  
+    if (randomNumber === 1) {
       setActivePlayer((activePlayer) => (activePlayer === 1 ? 2 : 1))
       setCurrent(0)
     } else {
+
       // setCurrent (current + diceNumber)
     //  setCurrent((current) => current + diceNumber)
-    updateDiceNumber(diceNumber)
+    updateDiceNumber(randomNumber)
     }
     
   }
  
-  // useEffect(() => {
-  //   if (diceNumber === 1) {
-  //     setActivePlayer((activePlayer) => (activePlayer === 1 ? 2 : 1))
-  //     setCurrent(0)
-  //   } else {
-  //     // setCurrent (current + diceNumber)
-  //     setCurrent((current) => current + diceNumber)
-  //   }
-  // }, [ diceNumber])
-
   
   return (
     <main>
       <Player
         name="Player 1"
         score={score[0]}
-        current={activePlayer === 1 && current}
+        current={activePlayer === 1 && current }
         isActive={activePlayer === 1}
-        winner={activePlayer === 1 && winner}
+        
       />
       <Player
         name="Player 2"
         score={score[1]}
         current={activePlayer === 2 && current}
         isActive={activePlayer === 2}
-        winner={activePlayer === 2 && winner}
+        
       />
       {diceNumber && (
         <img
@@ -114,7 +102,7 @@ const updateDiceNumber = (diceNumber) => {
       <button className="btn btn--new" onClick={handleNewGame}>
         🔄 New game
       </button>
-      <button className="btn btn--roll" ref={inputRef} onClick={handleRollDice}>
+      <button className="btn btn--roll"  onClick={handleRollDice}>
         🎲 Roll dice
       </button>
       <button className="btn btn--hold" onClick={handleHold}>
